@@ -11,9 +11,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Implements index, add and show posts logic
+ * Implements index, add and show posts logic.
  *
  * @author Yuriy Filonenko <mail@gmail.com>
+ *
+ * @Route("/blog")
  */
 class BlogController extends AbstractController
 {

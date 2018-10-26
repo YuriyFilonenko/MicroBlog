@@ -1,5 +1,5 @@
 {
-    "name": "Yuriy Filonenko/blog.local",
+    "name": "Yuriy Filonenko/MicroBlog",
     "type": "project",
     "license": "proprietary",
     "require": {
@@ -22,10 +22,13 @@
         "symfony/twig-bundle": "*",
         "symfony/validator": "*",
         "symfony/web-link": "*",
+        "symfony/webpack-encore-pack": "^1.0",
         "symfony/yaml": "*"
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.0",
         "friendsofphp/php-cs-fixer": "^2.13",
+        "fzaninotto/faker": "^1.8",
         "symfony/debug-pack": "*",
         "symfony/dotenv": "*",
         "symfony/maker-bundle": "^1.0",
