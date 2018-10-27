@@ -19,38 +19,38 @@ class MicroPost
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $microPostText;
+    private $microPost;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $createdTime;
+    private $createdAt;
 
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function getMicroPostText(): string
+    public function getMicroPost(): string
     {
-        return $this->microPostText;
+        return $this->microPost;
     }
 
-    public function setMicroPostText(string $microPostText): self
+    public function setMicroPost(string $microPost): self
     {
-        $this->microPostText = $microPostText;
+        $this->microPost = $microPost;
 
         return $this;
     }
 
-    public function getCreatedTime(): \DateTimeInterface
+    public function getCreatedAt(): \DateTimeInterface
     {
-        return $this->createdTime;
+        return $this->createdAt;
     }
 
-    public function setCreatedTime(\DateTimeInterface $createdTime): self
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
-        $this->createdTime = $createdTime;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
