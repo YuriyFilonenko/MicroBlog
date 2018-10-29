@@ -26,12 +26,17 @@ class MicroPost
      */
     private $createdAt;
 
-    public function getId(): int
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $updatedAt;
+
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getMicroPost(): string
+    public function getMicroPost(): ?string
     {
         return $this->microPost;
     }
@@ -51,6 +56,18 @@ class MicroPost
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): \DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

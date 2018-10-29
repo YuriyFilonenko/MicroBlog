@@ -20,8 +20,12 @@ class AppFixtures extends Fixture
 
         for ($i = 0; $i < 10; ++$i) {
             $microPost = new MicroPost();
-            $microPost->setMicroPost($faker->text(150));
-            $microPost->setCreatedAt(new \DateTime());
+            $microPost
+                ->setMicroPost($faker->text(150))
+                ->setCreatedAt(new \DateTime())
+                ->setUpdatedAt(new \DateTime())
+            ;
+            
             $manager->persist($microPost);
         }
 
