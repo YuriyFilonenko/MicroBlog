@@ -7,13 +7,10 @@ use App\Form\MicroPostType;
 use App\Repository\MicroPostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Implements CRUD logic.
@@ -24,20 +21,14 @@ use Symfony\Component\Routing\RouterInterface;
 class MicroPostController extends AbstractController
 {
     private $microPostRepository;
-    private $formFactory;
     private $entityManager;
-    private $router;
 
     public function __construct(
         MicroPostRepository $microPostRepository,
-        FormFactoryInterface $formFactory,
-        EntityManagerInterface $entityManager,
-        RouterInterface $router
+        EntityManagerInterface $entityManager
     ) {
         $this->microPostRepository = $microPostRepository;
-        $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
-        $this->router = $router;
     }
 
     /**
@@ -65,14 +56,14 @@ class MicroPostController extends AbstractController
         $microPost->setCreatedAt(new \DateTime());
         $microPost->setUpdatedAt(new \DateTime());
 
-        $form = $this->formFactory->create(MicroPostType::class, $microPost);
+        $form = $this->createForm(MicroPostType::class, $microPost);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($microPost);
             $this->entityManager->flush();
 
-            return new RedirectResponse($this->router->generate('micro_post_index'));
+            return $this->redirectToRoute('micro_post_index');
         }
 
         return $this->render('micro-post/add.html.twig', [
@@ -83,7 +74,7 @@ class MicroPostController extends AbstractController
     /**
      * @Route("/edit/{id}", name="micro_post_edit")
      *
-     * @param int     $id      micro_post id
+     * @param int $id micro_post id
      * @param Request $request
      *
      * @throws NotFoundHttpException
@@ -100,13 +91,13 @@ class MicroPostController extends AbstractController
 
         $microPost->setUpdatedAt(new \DateTime());
 
-        $form = $this->formFactory->create(MicroPostType::class, $microPost);
+        $form = $this->createForm(MicroPostType::class, $microPost);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
-            return new RedirectResponse($this->router->generate('micro_post_index'));
+            return $this->redirectToRoute('micro_post_index');
         }
 
         return $this->render('micro-post/add.html.twig', [
@@ -119,9 +110,9 @@ class MicroPostController extends AbstractController
      * 
      * @param int $id
      * 
-     * @return RedirectResponse
+     * @return Response
      */
-    public function delete(int $id)
+    public function delete(int $id): Response
     {
         $microPost = $this->microPostRepository->find($id);
 
@@ -132,11 +123,11 @@ class MicroPostController extends AbstractController
         $this->entityManager->remove($microPost);
         $this->entityManager->flush();
         
-        return new RedirectResponse($this->router->generate('micro_post_index'));
+        return $this->redirectToRoute('micro_post_index');
     }
 
     /**
-     * @Route("/{id}", name="micro_post_post")
+     * @Route("/post/{id}", name="micro_post_post")
      *
      * @param type $id micro_post id
      *
