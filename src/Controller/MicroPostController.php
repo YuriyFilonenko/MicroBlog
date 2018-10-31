@@ -16,7 +16,6 @@ use Symfony\Component\Routing\Annotation\Route;
  * Implements CRUD logic.
  *
  * @author Yuriy Filonenko <mail@gmail.com>
-
  */
 class MicroPostController extends AbstractController
 {
@@ -74,7 +73,7 @@ class MicroPostController extends AbstractController
     /**
      * @Route("/edit/{id}", name="micro_post_edit")
      *
-     * @param int $id micro_post id
+     * @param int     $id      micro_post id
      * @param Request $request
      *
      * @throws NotFoundHttpException
@@ -104,12 +103,12 @@ class MicroPostController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    
+
     /**
      * @Route("/delete/{id}", name="micro_post_delete")
-     * 
+     *
      * @param int $id
-     * 
+     *
      * @return Response
      */
     public function delete(int $id): Response
@@ -119,10 +118,10 @@ class MicroPostController extends AbstractController
         if (!$microPost) {
             throw new NotFoundHttpException('Post not found!');
         }
-        
+
         $this->entityManager->remove($microPost);
         $this->entityManager->flush();
-        
+
         return $this->redirectToRoute('micro_post_index');
     }
 

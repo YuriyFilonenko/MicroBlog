@@ -16,7 +16,9 @@ class SecurityController extends AbstractController
 {
     /**
      * @Route("/login", name="security_login")
+     *
      * @param AuthenticationUtils $authenticationUtils
+     *
      * @return Response
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
@@ -26,12 +28,11 @@ class SecurityController extends AbstractController
             'error' => $authenticationUtils->getLastAuthenticationError(),
         ]);
     }
-    
+
     /**
      * @Route("/logout", name="security_logout")
      */
     public function logout()
     {
-        
     }
 }

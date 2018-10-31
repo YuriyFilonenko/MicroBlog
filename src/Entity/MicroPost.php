@@ -34,6 +34,12 @@ class MicroPost
      */
     private $updatedAt;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
+     * @ORM\JoinColumn()
+     */
+    private $user;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -71,6 +77,18 @@ class MicroPost
     public function setUpdatedAt(\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function setUser($user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

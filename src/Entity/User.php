@@ -3,16 +3,17 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields="email", message="This email is already used")
  * @UniqueEntity(fields="username", message="This username is already used")
  */
-class User implements UserInterface, \Serializable
+class User implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -32,12 +33,12 @@ class User implements UserInterface, \Serializable
      * @ORM\Column(type="string", length=255)
      */
     private $password;
-    
+
     /**
      * @Assert\NotBlank()
      * @Assert\Length(min=6, max=255, minMessage="Minimal password length - 6 characters")
      */
-    private $rowPassword;
+    private $plainPassword;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
@@ -53,7 +54,17 @@ class User implements UserInterface, \Serializable
      */
     private $fullName;
 
-    public function getId(): ?int
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\MicroPost", mappedBy="user")
+     */
+    private $posts;
+
+    public function __construct()
+    {
+        $this->posts = new ArrayCollection();
+    }
+
+    public function getId(): int
     {
         return $this->id;
     }
@@ -93,15 +104,15 @@ class User implements UserInterface, \Serializable
 
         return $this;
     }
-    
-    public function getRowPassword(): ?string
+
+    public function getPlainPassword(): ?string
     {
-        return $this->rowPassword;
+        return $this->plainPassword;
     }
 
-    public function setRowPassword(string $rowPassword): self
+    public function setplainPassword(string $plainPassword): self
     {
-        $this->rowPassword = $rowPassword;
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }
@@ -118,36 +129,24 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
-    public function eraseCredentials() 
+    public function eraseCredentials()
     {
-        
     }
 
-    public function getRoles() 
+    public function getRoles()
     {
         return [
-            'ROLE_USER'
+            'ROLE_USER',
         ];
     }
 
-    public function getSalt() 
+    public function getSalt()
     {
         return null;
     }
 
-    public function serialize(): ?string 
+    public function getPosts()
     {
-        return serialize([
-            $this->id,
-            $this->username,
-            $this->password
-        ]);
-    }
-
-    public function unserialize($serialized): void 
-    {
-        list($this->id,
-            $this->username,
-            $this->password) = unserialize($serialized);
+        return $this->posts;
     }
 }

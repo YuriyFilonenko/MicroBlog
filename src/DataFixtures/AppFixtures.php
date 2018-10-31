@@ -18,8 +18,8 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class AppFixtures extends Fixture
 {
     private $passwordEncoder;
-    
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder) 
+
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->passwordEncoder = $passwordEncoder;
     }
@@ -27,39 +27,42 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $this->loadUsers($manager);
-        //$this->loadMicroPosts($manager);
+        $this->loadMicroPosts($manager);
     }
-    
+
     public function loadMicroPosts(ObjectManager $manager)
     {
         $faker = Factory::create();
 
-        for ($i = 0; $i < 10; ++$i) {
+        for ($i = 0; $i < 5; ++$i) {
             $microPost = new MicroPost();
             $microPost
                 ->setMicroPost($faker->text(150))
                 ->setCreatedAt(new DateTime())
                 ->setUpdatedAt(new DateTime())
+                ->setUser($this->getReference('User1'))
             ;
-            
+
             $manager->persist($microPost);
         }
 
         $manager->flush();
     }
-    
+
     public function loadUsers(ObjectManager $manager)
     {
         $faker = Factory::create();
-        
-        $user = new User;
+
+        $user = new User();
         $user
-            ->setUsername('Tom')
-            ->setFullName('Tom Cat')
+            ->setUsername('User1')
+            ->setFullName('User One')
             ->setEmail($faker->email)
-            ->setPassword($this->passwordEncoder->encodePassword($user, 'pass123')
+            ->setPassword($this->passwordEncoder->encodePassword($user, '111111')
         );
-        
+
+        $this->addReference('User1', $user);
+
         $manager->persist($user);
         $manager->flush();
     }

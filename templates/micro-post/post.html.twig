@@ -1,11 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}      
-
     <div class="media text-muted pt-3">
-        <img data-src="holder.js/32x32?text=MJ&bg=e83e8c&fg=fff&size=8" alt="" class="mr-2 rounded">
+        <img data-src="holder.js/32x32?text=MBlog&bg=e83e8c&fg=fff&size=7" alt="" class="mr-2 rounded">
         <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-            <span class="d-block"><strong class="text-gray-dark">@username</strong> <small>{{ post.createdAt|date("d/m/Y H:i") }}</small></span>
+            <span class="d-block"><strong class="text-gray-dark">{{ post.user.username }}</strong> <small>{{ post.createdAt|date("d/m/Y H:i") }}</small></span>
             {{ post.microPost }}
         </p>
     </div>
