@@ -59,6 +59,8 @@ class MicroPostController extends AbstractController
         $form = $this->createForm(MicroPostType::class, $microPost);
         $form->handleRequest($request);
 
+        $this->denyAccessUnlessGranted('add', $microPost);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($microPost);
             $this->entityManager->flush();

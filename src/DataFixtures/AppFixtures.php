@@ -58,6 +58,7 @@ class AppFixtures extends Fixture
             ->setUsername('User1')
             ->setFullName('User One')
             ->setEmail($faker->email)
+            ->setRoles([User::ROLE_USER])
             ->setPassword($this->passwordEncoder->encodePassword($user, '111111')
         );
 

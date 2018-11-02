@@ -15,6 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    const ROLE_USER = 'ROLE_USER';
+    const ROLE_ADMIN = 'ROLE_ADMIN';
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -53,6 +55,11 @@ class User implements UserInterface
      * @Assert\Length(min=4, max=50, minMessage="Minimal fullname length - 4 characters")
      */
     private $fullName;
+
+    /**
+     * @ORM\Column(type="simple_array")
+     */
+    private $roles;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\MicroPost", mappedBy="user")
@@ -133,11 +140,16 @@ class User implements UserInterface
     {
     }
 
-    public function getRoles()
+    public function getRoles(): ?array
     {
-        return [
-            'ROLE_USER',
-        ];
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
 
     public function getSalt()
