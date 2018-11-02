@@ -20,13 +20,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class MicroPostController extends AbstractController
 {
     private $microPostRepository;
+    private $userRepository;
     private $entityManager;
 
     public function __construct(
         MicroPostRepository $microPostRepository,
+        \App\Repository\UserRepository $userRepository,
         EntityManagerInterface $entityManager
     ) {
         $this->microPostRepository = $microPostRepository;
+        $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
     }
 
@@ -70,6 +73,30 @@ class MicroPostController extends AbstractController
 
         return $this->render('micro-post/add.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/user/{username}", name="micro_post_user")
+     *
+     * @param string $username username of posts author
+     *
+     * @throws NotFoundHttpException
+     *
+     * @return Response
+     */
+    public function userPosts(string $username): Response
+    {
+        $userWithPosts = $this->userRepository->findBy(['username' => $username]);
+
+        if (!$userWithPosts) {
+            throw new NotFoundHttpException('User not found!');
+        }
+
+        return $this->render('micro-post/index.html.twig', [
+            'posts' => $this->microPostRepository->findBy(
+                ['user' => $userWithPosts],
+                ['createdAt' => 'DESC']),
         ]);
     }
 

@@ -69,6 +69,7 @@ class User implements UserInterface
     public function __construct()
     {
         $this->posts = new ArrayCollection();
+        $this->roles = [self::ROLE_USER];
     }
 
     public function getId(): int
@@ -140,7 +141,7 @@ class User implements UserInterface
     {
     }
 
-    public function getRoles(): ?array
+    public function getRoles()
     {
         return $this->roles;
     }
