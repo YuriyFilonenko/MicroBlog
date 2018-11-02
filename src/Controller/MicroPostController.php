@@ -54,6 +54,7 @@ class MicroPostController extends AbstractController
         $microPost = new MicroPost();
         $microPost->setCreatedAt(new \DateTime());
         $microPost->setUpdatedAt(new \DateTime());
+        $microPost->setUser($this->getUser());
 
         $form = $this->createForm(MicroPostType::class, $microPost);
         $form->handleRequest($request);
@@ -88,6 +89,8 @@ class MicroPostController extends AbstractController
             throw new NotFoundHttpException('Post not found!');
         }
 
+        $this->denyAccessUnlessGranted('edit', $microPost);
+
         $microPost->setUpdatedAt(new \DateTime());
 
         $form = $this->createForm(MicroPostType::class, $microPost);
@@ -118,6 +121,8 @@ class MicroPostController extends AbstractController
         if (!$microPost) {
             throw new NotFoundHttpException('Post not found!');
         }
+
+        $this->denyAccessUnlessGranted('delete', $microPost);
 
         $this->entityManager->remove($microPost);
         $this->entityManager->flush();

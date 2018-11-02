@@ -81,7 +81,7 @@ class MicroPost
         return $this;
     }
 
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
