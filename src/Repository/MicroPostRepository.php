@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\MicroPost;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @method null|MicroPost find($id, $lockMode = null, $lockVersion = null)
@@ -12,10 +13,74 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  * @method MicroPost[]    findAll()
  * @method MicroPost[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MicroPostRepository extends ServiceEntityRepository
+class MicroPostRepository extends ServiceEntityRepository implements MicroPostRepositoryInterface
 {
-    public function __construct(RegistryInterface $registry)
+    private $userRepository;
+
+    public function __construct(RegistryInterface $registry, UserRepositoryInterface $userRepository)
     {
         parent::__construct($registry, MicroPost::class);
+        $this->userRepository = $userRepository;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getListOfPosts(): iterable
+    {
+        return $posts = $this->findBy([], ['createdAt' => 'DESC']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addPost(MicroPost $microPost): void
+    {
+        $em = $this->getEntityManager();
+        $em->persist($microPost);
+        $em->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUserPosts(string $username): iterable
+    {
+        $userWithPosts = $this->userRepository->findUserByUsername($username);
+
+        if (!$userWithPosts) {
+            throw new NotFoundHttpException('User not found!');
+        }
+
+        return $userPosts = $this->findBy(
+            ['user' => $userWithPosts],
+            ['createdAt' => 'DESC']
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deletePostById(int $id): void
+    {
+        $post = $this->find($id);
+
+        $em = $this->getEntityManager();
+        $em->remove($post);
+        $em->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPostById(int $id): MicroPost
+    {
+        $post = $this->find($id);
+
+        if (!$post) {
+            throw new NotFoundHttpException('Post not found!');
+        }
+
+        return $post;
     }
 }

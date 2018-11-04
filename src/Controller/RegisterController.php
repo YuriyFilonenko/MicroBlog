@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\RegisterServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,14 +19,14 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class RegisterController extends AbstractController
 {
     private $passwordEncoder;
-    private $entityManager;
+    private $service;
 
     public function __construct(
         UserPasswordEncoderInterface $passwordEncoder,
-        EntityManagerInterface $entityManager
+        RegisterServiceInterface $service
     ) {
         $this->passwordEncoder = $passwordEncoder;
-        $this->entityManager = $entityManager;
+        $this->service = $service;
     }
 
     /**
@@ -45,8 +45,7 @@ class RegisterController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $this->passwordEncoder->encodePassword($user, $user->getPlainPassword());
             $user->setPassword($password);
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
+            $this->service->registerUser($user);
 
             return $this->redirectToRoute('micro_post_index');
         }

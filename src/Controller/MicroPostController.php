@@ -4,12 +4,10 @@ namespace App\Controller;
 
 use App\Entity\MicroPost;
 use App\Form\MicroPostType;
-use App\Repository\MicroPostRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\MicroPostServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -19,18 +17,11 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class MicroPostController extends AbstractController
 {
-    private $microPostRepository;
-    private $userRepository;
-    private $entityManager;
+    private $service;
 
-    public function __construct(
-        MicroPostRepository $microPostRepository,
-        \App\Repository\UserRepository $userRepository,
-        EntityManagerInterface $entityManager
-    ) {
-        $this->microPostRepository = $microPostRepository;
-        $this->userRepository = $userRepository;
-        $this->entityManager = $entityManager;
+    public function __construct(MicroPostServiceInterface $service)
+    {
+        $this->service = $service;
     }
 
     /**
@@ -41,7 +32,7 @@ class MicroPostController extends AbstractController
     public function index(): Response
     {
         return $this->render('micro-post/index.html.twig', [
-            'posts' => $this->microPostRepository->findBy([], ['createdAt' => 'DESC']),
+            'posts' => $this->service->getListOfPosts(),
         ]);
     }
 
@@ -65,8 +56,7 @@ class MicroPostController extends AbstractController
         $this->denyAccessUnlessGranted('add', $microPost);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->persist($microPost);
-            $this->entityManager->flush();
+            $this->service->addPost($microPost);
 
             return $this->redirectToRoute('micro_post_index');
         }
@@ -79,44 +69,28 @@ class MicroPostController extends AbstractController
     /**
      * @Route("/user/{username}", name="micro_post_user")
      *
-     * @param string $username username of posts author
-     *
-     * @throws NotFoundHttpException
+     * @param string $username posts author username
      *
      * @return Response
      */
     public function userPosts(string $username): Response
     {
-        $userWithPosts = $this->userRepository->findBy(['username' => $username]);
-
-        if (!$userWithPosts) {
-            throw new NotFoundHttpException('User not found!');
-        }
-
         return $this->render('micro-post/index.html.twig', [
-            'posts' => $this->microPostRepository->findBy(
-                ['user' => $userWithPosts],
-                ['createdAt' => 'DESC']),
+            'posts' => $this->service->getUserPosts($username),
         ]);
     }
 
     /**
      * @Route("/edit/{id}", name="micro_post_edit")
      *
-     * @param int     $id      micro_post id
+     * @param int     $id      micro-post id
      * @param Request $request
-     *
-     * @throws NotFoundHttpException
      *
      * @return Response
      */
     public function edit(int $id, Request $request): Response
     {
-        $microPost = $this->microPostRepository->find($id);
-
-        if (!$microPost) {
-            throw new NotFoundHttpException('Post not found!');
-        }
+        $microPost = $this->service->getPostById($id);
 
         $this->denyAccessUnlessGranted('edit', $microPost);
 
@@ -126,7 +100,7 @@ class MicroPostController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
+            $this->service->addPost($microPost);
 
             return $this->redirectToRoute('micro_post_index');
         }
@@ -139,22 +113,17 @@ class MicroPostController extends AbstractController
     /**
      * @Route("/delete/{id}", name="micro_post_delete")
      *
-     * @param int $id
+     * @param int $id micro-post id
      *
      * @return Response
      */
     public function delete(int $id): Response
     {
-        $microPost = $this->microPostRepository->find($id);
-
-        if (!$microPost) {
-            throw new NotFoundHttpException('Post not found!');
-        }
+        $microPost = $this->service->getPostById($id);
 
         $this->denyAccessUnlessGranted('delete', $microPost);
 
-        $this->entityManager->remove($microPost);
-        $this->entityManager->flush();
+        $this->service->deletePostById($id);
 
         return $this->redirectToRoute('micro_post_index');
     }
@@ -162,22 +131,14 @@ class MicroPostController extends AbstractController
     /**
      * @Route("/post/{id}", name="micro_post_post")
      *
-     * @param type $id micro_post id
-     *
-     * @throws NotFoundHttpException
+     * @param int $id micro-post id
      *
      * @return Response
      */
     public function post(int $id): Response
     {
-        $post = $this->microPostRepository->find($id);
-
-        if (!$post) {
-            throw new NotFoundHttpException('Post not found!');
-        }
-
         return $this->render('micro-post/post.html.twig', [
-            'post' => $post,
+            'post' => $this->service->getPostById($id),
         ]);
     }
 }
