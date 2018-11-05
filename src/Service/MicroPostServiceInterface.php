@@ -49,7 +49,7 @@ interface MicroPostServiceInterface
      * Gets post by id.
      *
      * @param int $id
-     * 
+     *
      * @return MicroPost
      */
     public function getPostById(int $id): MicroPost;

@@ -1,5 +1,6 @@
 parameters:
     locale: 'en'
+    mail_from: 'microblog@test.com'
 
 services:
     # default configuration for services in *this* file
@@ -9,6 +10,8 @@ services:
         public: false       # Allows optimizing the container by removing unused services; this also means
                             # fetching services directly from the container via $container->get() won't work.
                             # The best practice is to be explicit about your dependencies anyway.
+        bind:
+            $mailFrom: '%mail_from%'
 
     App\:
         resource: '../src/*'
@@ -21,4 +24,5 @@ services:
     # Aliases
     App\Service\MicroPostServiceInterface: '@App\Service\MySqlMicroPost'
     App\Service\RegisterServiceInterface: '@App\Service\MySqlRegister'
+    App\Service\MailerServiceInterface: '@App\Service\SwiftMailer'
    

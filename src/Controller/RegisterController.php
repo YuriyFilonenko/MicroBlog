@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Event\UserRegisterEvent;
 use App\Form\UserType;
 use App\Service\RegisterServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,13 +22,16 @@ class RegisterController extends AbstractController
 {
     private $passwordEncoder;
     private $service;
+    private $eventDispatcher;
 
     public function __construct(
         UserPasswordEncoderInterface $passwordEncoder,
-        RegisterServiceInterface $service
+        RegisterServiceInterface $service,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->passwordEncoder = $passwordEncoder;
         $this->service = $service;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -43,9 +48,18 @@ class RegisterController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $this->passwordEncoder->encodePassword($user, $user->getPlainPassword());
+            $password = $this->passwordEncoder->encodePassword(
+                $user,
+                $user->getPlainPassword()
+            );
             $user->setPassword($password);
             $this->service->registerUser($user);
+
+            $userRegisterEvent = new UserRegisterEvent($user);
+            $this->eventDispatcher->dispatch(
+                UserRegisterEvent::NAME,
+                $userRegisterEvent
+            );
 
             return $this->redirectToRoute('micro_post_index');
         }
