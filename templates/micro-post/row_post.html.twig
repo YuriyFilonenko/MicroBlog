@@ -4,9 +4,9 @@
         <span class="d-block">
             <a href="{{ path('micro_post_user', {'username': post.user.username}) }}"><strong class="text-gray-dark">{{ post.user.username }}</strong></a>
             {% if post.createdAt == post.updatedAt %}
-                <small>Created at: {{ post.createdAt|date("d/m/Y H:i") }}</small>
+                <small>Created: {{ post.createdAt|ago }}</small>
             {% else %}
-                <small>Updated at: {{ post.updatedAt|date("d/m/Y H:i") }}</small>
+                <small>Updated: {{ post.updatedAt|ago }}</small>
             {% endif %}
         </span>
         <a href="{{ path('micro_post_post', {'id':post.id}) }}">{{ post.microPost }}</a>
