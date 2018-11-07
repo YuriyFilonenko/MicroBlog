@@ -175,10 +175,10 @@ class User implements UserInterface, Serializable
 
     public function unserialize($serialized): void
     {
-        list(
+        [
             $this->id,
             $this->username,
             $this->password
-        ) = \unserialize($serialized);
+        ] = \unserialize($serialized);
     }
 }

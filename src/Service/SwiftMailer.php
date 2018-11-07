@@ -5,7 +5,7 @@ namespace App\Service;
 use App\Entity\User;
 
 /**
- * SwiftMailer service. 
+ * SwiftMailer service.
  *
  * @author Yuriy Filonenko <mail@gmail.com>
  */

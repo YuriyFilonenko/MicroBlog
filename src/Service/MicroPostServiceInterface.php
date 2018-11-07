@@ -22,8 +22,6 @@ interface MicroPostServiceInterface
      * Add given post.
      *
      * @param MicroPost $microPost
-     * 
-     * @return void
      */
     public function addPost(MicroPost $microPost): void;
 
@@ -40,8 +38,6 @@ interface MicroPostServiceInterface
      * Delete post by id.
      *
      * @param int $id
-     * 
-     * @return void
      */
     public function deletePostById(int $id): void;
 

@@ -28,10 +28,10 @@ class UserSubscriber implements EventSubscriberInterface
             UserRegisterEvent::NAME => 'onUserRegister',
         ];
     }
-    
+
     /**
      * Send email after user registration.
-     * 
+     *
      * @param UserRegisterEvent $event
      * 
      * @return void
