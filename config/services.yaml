@@ -22,7 +22,8 @@ services:
         tags: ['controller.service_arguments']
 
     # Aliases
-    App\Service\MicroPostServiceInterface: '@App\Service\MySqlMicroPost'
-    App\Service\RegisterServiceInterface: '@App\Service\MySqlRegister'
-    App\Service\MailerServiceInterface: '@App\Service\SwiftMailer'
+    App\Service\MicroPost\MicroPostServiceInterface: '@App\Service\MicroPost\MySqlMicroPost'
+    App\Service\Register\RegisterServiceInterface: '@App\Service\Register\MySqlRegister'
+    App\Service\Mailer\MailerServiceInterface: '@App\Service\Mailer\SwiftMailer'
+    App\Service\Paginator\PaginatorServiceInterface: '@App\Service\Paginator\KnpPaginator'
    

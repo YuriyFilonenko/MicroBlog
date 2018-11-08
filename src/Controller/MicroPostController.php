@@ -4,7 +4,8 @@ namespace App\Controller;
 
 use App\Entity\MicroPost;
 use App\Form\MicroPostType;
-use App\Service\MicroPostServiceInterface;
+use App\Service\MicroPost\MicroPostServiceInterface;
+use App\Service\Paginator\PaginatorServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,10 +19,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class MicroPostController extends AbstractController
 {
     private $service;
+    private $paginator;
 
-    public function __construct(MicroPostServiceInterface $service)
-    {
+    public function __construct(
+        MicroPostServiceInterface $service,
+        PaginatorServiceInterface $paginator
+    ) {
         $this->service = $service;
+        $this->paginator = $paginator;
     }
 
     /**
@@ -31,8 +36,12 @@ class MicroPostController extends AbstractController
      */
     public function index(): Response
     {
+        $posts = $this->service->getListOfPosts();
+
+        $postsPagination = $this->paginator->paginatePosts($posts);
+
         return $this->render('micro-post/index.html.twig', [
-            'posts' => $this->service->getListOfPosts(),
+            'posts' => $postsPagination,
         ]);
     }
 
@@ -75,8 +84,12 @@ class MicroPostController extends AbstractController
      */
     public function userPosts(string $username): Response
     {
+        $userPosts = $this->service->getUserPosts($username);
+
+        $userPostsPagination = $this->paginator->paginatePosts($userPosts);
+
         return $this->render('micro-post/index.html.twig', [
-            'posts' => $this->service->getUserPosts($username),
+            'posts' => $userPostsPagination,
         ]);
     }
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Mailer;
 
 use App\Entity\User;
 
 /**
- * Contract Mailer service.
+ * Contract for Mailer service.
  *
  * @author Yuriy Filonenko <mail@gmail.com>
  */

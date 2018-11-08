@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\MicroPost;
 
 use App\Entity\MicroPost;
 use App\Repository\MicroPostRepositoryInterface;

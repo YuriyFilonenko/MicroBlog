@@ -13,4 +13,9 @@
         </small>
         {% include 'micro-post/row_post.html.twig' %}
     {% endfor %}
+     <p><div class="text-center">
+        <small class="pagination">
+           {{ knp_pagination_render(posts) }}
+        </small>
+    </div></p>
 {% endblock%}

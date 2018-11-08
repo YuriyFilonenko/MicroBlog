@@ -2,7 +2,7 @@
 
 namespace App\Event;
 
-use App\Service\MailerServiceInterface;
+use App\Service\Mailer\MailerServiceInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -33,8 +33,6 @@ class UserSubscriber implements EventSubscriberInterface
      * Send email after user registration.
      *
      * @param UserRegisterEvent $event
-     * 
-     * @return void
      */
     public function onUserRegister(UserRegisterEvent $event): void
     {

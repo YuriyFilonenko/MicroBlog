@@ -5,8 +5,8 @@ namespace App\Test\Service;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Repository\UserRepositoryInterface;
-use App\Service\MySqlRegister;
-use App\Service\RegisterServiceInterface;
+use App\Service\Register\MySqlRegister;
+use App\Service\Register\RegisterServiceInterface;
 use PHPUnit\Framework\TestCase;
 
 /**

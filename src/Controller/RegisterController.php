@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Event\UserRegisterEvent;
 use App\Form\UserType;
-use App\Service\RegisterServiceInterface;
+use App\Service\Register\RegisterServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;

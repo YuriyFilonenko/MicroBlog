@@ -5,8 +5,8 @@ namespace App\Test\Service;
 use App\Entity\MicroPost;
 use App\Repository\MicroPostRepository;
 use App\Repository\MicroPostRepositoryInterface;
-use App\Service\MicroPostServiceInterface;
-use App\Service\MySqlMicroPost;
+use App\Service\MicroPost\MicroPostServiceInterface;
+use App\Service\MicroPost\MySqlMicroPost;
 use PHPUnit\Framework\TestCase;
 
 /**

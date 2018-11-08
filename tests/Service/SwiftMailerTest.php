@@ -2,8 +2,8 @@
 
 namespace App\Test\Service;
 
-use App\Service\MailerServiceInterface;
-use App\Service\SwiftMailer;
+use App\Service\Mailer\MailerServiceInterface;
+use App\Service\Mailer\SwiftMailer;
 use PHPUnit\Framework\TestCase;
 use Swift_Mailer;
 use Twig_Environment;
