@@ -1,0 +1,51 @@
+version: '3.5'
+services:
+    
+    web:
+        build: ./web
+        environment:
+            APACHE_RUN_USER: www-data
+        restart: on-failure
+        env_file:
+            - .env
+        volumes:
+            - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
+            - ./web/000-default.conf:/etc/apache2/sites-available/000-default.conf
+        ports:
+            - "8080:80" 
+        working_dir: ${APP_PATH_CONTAINER}
+     
+    db:
+        image: i386/mariadb:5.5
+        restart: on-failure
+        env_file:
+            - .env
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        volumes:
+            - ${DB_PATH_HOST}:/var/lib/mysql
+       
+    adminer:
+        image: adminer
+        restart: on-failure
+        ports:
+           - "6080:8080"
+       
+    composer:
+        image: i386/composer
+        env_file:
+           - .env
+        volumes:
+            - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
+        working_dir: ${APP_PATH_CONTAINER}
+        command: composer install
+        
+    node:
+        image: i386/node:8.12.0
+        env_file:
+            - .env
+        volumes:
+            - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
+        working_dir: ${APP_PATH_CONTAINER}
+        command: yarn install
+        command: yarn encore dev
