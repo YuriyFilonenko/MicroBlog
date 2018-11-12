@@ -2,7 +2,7 @@ version: '3.5'
 services:
     
     web:
-        build: ./web
+        build: ./.docker/web
         environment:
             APACHE_RUN_USER: www-data
         restart: on-failure
@@ -10,7 +10,7 @@ services:
             - .env
         volumes:
             - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
-            - ./web/000-default.conf:/etc/apache2/sites-available/000-default.conf
+            - ./.docker/web/000-default.conf:/etc/apache2/sites-available/000-default.conf
         ports:
             - "8080:80" 
         working_dir: ${APP_PATH_CONTAINER}
@@ -21,7 +21,7 @@ services:
         env_file:
             - .env
         environment:
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
         volumes:
             - ${DB_PATH_HOST}:/var/lib/mysql
        
@@ -42,10 +42,12 @@ services:
         
     node:
         image: i386/node:8.12.0
+        depends_on:
+            - composer
         env_file:
             - .env
         volumes:
             - ${APP_PATH_HOST}:${APP_PATH_CONTAINER}
         working_dir: ${APP_PATH_CONTAINER}
-        command: yarn install
-        command: yarn encore dev
+        command:  bash -c "yarn install && yarn encore dev"
+

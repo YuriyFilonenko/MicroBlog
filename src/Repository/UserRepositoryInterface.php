@@ -18,7 +18,7 @@ interface UserRepositoryInterface
      *
      * @return User
      */
-    public function findUserByUsername(string $username): User;
+    public function findUserByUsername(string $username): ?User;
 
     /**
      * Register user.

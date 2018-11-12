@@ -12,9 +12,9 @@ use App\Entity\User;
 interface MailerServiceInterface
 {
     /**
-     * Send email after user registration.
+     * Sending emails.
      *
      * @param User $user
      */
-    public function sendRegistrationEmail(User $user): void;
+    public function sendEmail(User $user): void;
 }

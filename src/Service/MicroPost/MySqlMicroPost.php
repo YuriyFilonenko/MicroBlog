@@ -4,6 +4,7 @@ namespace App\Service\MicroPost;
 
 use App\Entity\MicroPost;
 use App\Repository\MicroPostRepositoryInterface;
+use Doctrine\ORM\EntityNotFoundException;
 
 /**
  * MicroPost service that fetch data from database.
@@ -40,7 +41,13 @@ class MySqlMicroPost implements MicroPostServiceInterface
      */
     public function getUserPosts(string $username): iterable
     {
-        return $userPosts = $this->microPostRepository->getUserPosts($username);
+        $userPosts = $this->microPostRepository->getUserPosts($username);
+
+        if (!$userPosts) {
+            throw new EntityNotFoundException('User not found!');
+        }
+
+        return $userPosts;
     }
 
     /**
@@ -56,6 +63,12 @@ class MySqlMicroPost implements MicroPostServiceInterface
      */
     public function getPostById(int $id): MicroPost
     {
-        return $post = $this->microPostRepository->getPostById($id);
+        $post = $this->microPostRepository->getPostById($id);
+
+        if (!$post) {
+            throw new EntityNotFoundException('Post not found!');
+        }
+
+        return $post;
     }
 }

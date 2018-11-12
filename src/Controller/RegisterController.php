@@ -41,7 +41,7 @@ class RegisterController extends AbstractController
      *
      * @return Response
      */
-    public function register(Request $request)
+    public function index(Request $request)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);

@@ -46,5 +46,5 @@ interface MicroPostRepositoryInterface
      *
      * @param int $id
      */
-    public function getPostById(int $id): MicroPost;
+    public function getPostById(int $id): ?MicroPost;
 }

@@ -37,6 +37,6 @@ class UserSubscriber implements EventSubscriberInterface
     public function onUserRegister(UserRegisterEvent $event): void
     {
         $user = $event->getRegisteredUser();
-        $this->service->sendRegistrationEmail($user);
+        $this->service->sendEmail($user);
     }
 }

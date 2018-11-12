@@ -3,6 +3,7 @@
 namespace App\Service\Mailer;
 
 use App\Entity\User;
+use App\Mail\WelcomeMessageLetter;
 
 /**
  * SwiftMailer service.
@@ -12,31 +13,19 @@ use App\Entity\User;
 class SwiftMailer implements MailerServiceInterface
 {
     private $mailer;
-    private $twig;
-    private $mailFrom;
+    private $welcomeMessagee;
 
-    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $twig, string $mailFrom)
+    public function __construct(\Swift_Mailer $mailer, WelcomeMessageLetter $welcomeMessage)
     {
         $this->mailer = $mailer;
-        $this->twig = $twig;
-        $this->mailFrom = $mailFrom;
+        $this->welcomeMessage = $welcomeMessage;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function sendRegistrationEmail(User $user): void
+    public function sendEmail(User $user): void
     {
-        $body = $this->twig->render('email/registration.html.twig', [
-            'user' => $user,
-        ]);
-
-        $message = (new \Swift_Message())
-            ->setSubject('Welcome to the MigroBlog!')
-            ->setFrom($this->mailFrom)
-            ->setTo($user->getEmail())
-            ->setBody($body, 'text/html');
-
-        $this->mailer->send($message);
+        $this->mailer->send($this->welcomeMessage->getWelcomeMessage($user));
     }
 }

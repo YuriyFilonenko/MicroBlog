@@ -22,7 +22,7 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
     /**
      * {@inheritdoc}
      */
-    public function findUserByUsername(string $username): User
+    public function findUserByUsername(string $username): ?User
     {
         return $this->findOneBy(['username' => $username]);
     }

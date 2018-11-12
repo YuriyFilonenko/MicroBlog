@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\MicroPost;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @method null|MicroPost find($id, $lockMode = null, $lockVersion = null)
@@ -48,10 +47,6 @@ class MicroPostRepository extends ServiceEntityRepository implements MicroPostRe
     {
         $userWithPosts = $this->userRepository->findUserByUsername($username);
 
-        if (!$userWithPosts) {
-            throw new NotFoundHttpException('User not found!');
-        }
-
         return $userPosts = $this->findBy(
             ['user' => $userWithPosts],
             ['createdAt' => 'DESC']
@@ -73,14 +68,8 @@ class MicroPostRepository extends ServiceEntityRepository implements MicroPostRe
     /**
      * {@inheritdoc}
      */
-    public function getPostById(int $id): MicroPost
+    public function getPostById(int $id): ?MicroPost
     {
-        $post = $this->find($id);
-
-        if (!$post) {
-            throw new NotFoundHttpException('Post not found!');
-        }
-
-        return $post;
+        return $post = $this->find($id);
     }
 }

@@ -6,9 +6,11 @@ use App\Entity\MicroPost;
 use App\Form\MicroPostType;
 use App\Service\MicroPost\MicroPostServiceInterface;
 use App\Service\Paginator\PaginatorServiceInterface;
+use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -84,7 +86,11 @@ class MicroPostController extends AbstractController
      */
     public function userPosts(string $username): Response
     {
-        $userPosts = $this->service->getUserPosts($username);
+        try {
+            $userPosts = $this->service->getUserPosts($username);
+        } catch (EntityNotFoundException $e) {
+            throw new NotFoundHttpException('User not found!');
+        }
 
         $userPostsPagination = $this->paginator->paginatePosts($userPosts);
 
@@ -150,8 +156,14 @@ class MicroPostController extends AbstractController
      */
     public function post(int $id): Response
     {
+        try {
+            $post = $this->service->getPostById($id);
+        } catch (EntityNotFoundException $e) {
+            throw new NotFoundHttpException('Post not found!');
+        }
+
         return $this->render('micro-post/post.html.twig', [
-            'post' => $this->service->getPostById($id),
+            'post' => $post,
         ]);
     }
 }
