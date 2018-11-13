@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Serializable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -18,6 +17,7 @@ class User implements UserInterface, Serializable
 {
     const ROLE_USER = 'ROLE_USER';
     const ROLE_ADMIN = 'ROLE_ADMIN';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -27,8 +27,6 @@ class User implements UserInterface, Serializable
 
     /**
      * @ORM\Column(type="string", length=50, unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Length(min=5, max=50, minMessage="Minimal username length - 5 characters")
      */
     private $username;
 
@@ -38,22 +36,12 @@ class User implements UserInterface, Serializable
     private $password;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Length(min=6, max=255, minMessage="Minimal password length - 6 characters")
-     */
-    private $plainPassword;
-
-    /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Email(message="Incorrect email")
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=50)
-     * @Assert\NotBlank()
-     * @Assert\Length(min=4, max=50, minMessage="Minimal fullname length - 4 characters")
      */
     private $fullName;
 
@@ -114,18 +102,6 @@ class User implements UserInterface, Serializable
         return $this;
     }
 
-    public function getPlainPassword(): ?string
-    {
-        return $this->plainPassword;
-    }
-
-    public function setPlainPassword(string $plainPassword): self
-    {
-        $this->plainPassword = $plainPassword;
-
-        return $this;
-    }
-
     public function getFullName(): ?string
     {
         return $this->fullName;
@@ -164,6 +140,9 @@ class User implements UserInterface, Serializable
         return $this->posts;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function serialize(): string
     {
         return \serialize([
@@ -173,6 +152,9 @@ class User implements UserInterface, Serializable
         ]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function unserialize($serialized): void
     {
         [

@@ -26,4 +26,6 @@ services:
     App\Service\Register\RegisterServiceInterface: '@App\Service\Register\MySqlRegister'
     App\Service\Mailer\MailerServiceInterface: '@App\Service\Mailer\SwiftMailer'
     App\Service\Paginator\PaginatorServiceInterface: '@App\Service\Paginator\KnpPaginator'
+    App\Service\PasswordEncoder\PasswordEncoderInterface: '@App\Service\PasswordEncoder\SymfonyPasswordEncoder'
+    App\Service\Event\DispatcherInterface: '@App\Service\Event\SymfonyEventDispatcher'
    

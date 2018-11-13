@@ -6,7 +6,7 @@ use App\Service\Mailer\MailerServiceInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Subscribe for UserRegisterEvent.
+ * Creates subscriber for UserRegisterEvent.
  *
  * @author Yuriy Filonenko <mail@gmail.com>
  */

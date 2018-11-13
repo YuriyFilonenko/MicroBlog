@@ -2,16 +2,15 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Event\UserRegisterEvent;
+use App\Dto\UserDto;
 use App\Form\UserType;
+use App\Service\Event\DispatcherInterface;
+use App\Service\PasswordEncoder\PasswordEncoderInterface;
 use App\Service\Register\RegisterServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Implement user regystration logic.
@@ -20,18 +19,18 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class RegisterController extends AbstractController
 {
-    private $passwordEncoder;
+    private $password;
     private $service;
-    private $eventDispatcher;
+    private $event;
 
     public function __construct(
-        UserPasswordEncoderInterface $passwordEncoder,
+        PasswordEncoderInterface $password,
         RegisterServiceInterface $service,
-        EventDispatcherInterface $eventDispatcher
+        DispatcherInterface $event
     ) {
-        $this->passwordEncoder = $passwordEncoder;
+        $this->password = $password;
         $this->service = $service;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->event = $event;
     }
 
     /**
@@ -41,25 +40,17 @@ class RegisterController extends AbstractController
      *
      * @return Response
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        $userDto = new UserDto();
+        $form = $this->createForm(UserType::class, $userDto);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $this->passwordEncoder->encodePassword(
-                $user,
-                $user->getPlainPassword()
-            );
-            $user->setPassword($password);
+            $userDto->setPassword($this->password->encode($userDto));
+            $user = $userDto->createUser();
             $this->service->registerUser($user);
-
-            $userRegisterEvent = new UserRegisterEvent($user);
-            $this->eventDispatcher->dispatch(
-                UserRegisterEvent::NAME,
-                $userRegisterEvent
-            );
+            $this->event->registerEvent($user);
 
             return $this->redirectToRoute('micro_post_index');
         }

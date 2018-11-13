@@ -6,7 +6,7 @@ use App\Service\Mailer\MailerServiceInterface;
 use App\Service\Mailer\SwiftMailer;
 use PHPUnit\Framework\TestCase;
 use Swift_Mailer;
-use Twig_Environment;
+use App\Mail\WelcomeMessageLetter;
 
 /**
  * Test case for SwiftMailer service.
@@ -22,8 +22,7 @@ class SwiftMailerTest extends TestCase
     {
         $this->service = new SwiftMailer(
             $this->getSwiftMailer(),
-            $this->getTwig(),
-            'microblog@test.com'
+            $this->getWelcomeMessageLetter()
         );
     }
 
@@ -41,13 +40,12 @@ class SwiftMailerTest extends TestCase
         $swiftMailer->expects(self::once())
             ->method('send');
         
-        $twig = $this->getTwig();
-        $twig->expects(self::once())
-            ->method('render')
-            ->with('email/registration.html.twig', ['user' => $user]);
+        $welcomeMessageLetter = $this->getWelcomeMessageLetter();
+        $welcomeMessageLetter->expects(self::once())
+                ->method('getWelcomeMessage');
         
-        $service = new SwiftMailer($swiftMailer, $twig, 'microblog@test.com');
-        $service->sendRegistrationEmail($user);
+        $service = new SwiftMailer($swiftMailer, $welcomeMessageLetter);
+        $service->sendEmail($user);
     }
     
     private function getSwiftMailer()
@@ -57,9 +55,9 @@ class SwiftMailerTest extends TestCase
             ->getMock();
     }
     
-    private function getTwig()
+    private function getWelcomeMessageLetter()
     {
-        return $this->getMockBuilder(Twig_Environment::class)
+        return $this->getMockBuilder(WelcomeMessageLetter::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
