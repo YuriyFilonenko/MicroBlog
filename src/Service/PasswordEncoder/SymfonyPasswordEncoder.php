@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  *
  * @author Yuriy Filonenko <mail@gmail.com>
  */
-final class SymfonyPasswordEncoder implements PasswordEncoderInterface
+class SymfonyPasswordEncoder implements PasswordEncoderInterface
 {
     private $passwordEncoder;
 

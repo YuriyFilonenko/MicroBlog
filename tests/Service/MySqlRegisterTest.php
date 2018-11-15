@@ -2,9 +2,14 @@
 
 namespace App\Test\Service;
 
-use App\Entity\User;
+use App\Dto\UserDto;
+use App\Dto\UserDtoToUser;
 use App\Repository\UserRepository;
 use App\Repository\UserRepositoryInterface;
+use App\Service\Event\DispatcherInterface;
+use App\Service\Event\SymfonyEventDispatcher;
+use App\Service\PasswordEncoder\PasswordEncoderInterface;
+use App\Service\PasswordEncoder\SymfonyPasswordEncoder;
 use App\Service\Register\MySqlRegister;
 use App\Service\Register\RegisterServiceInterface;
 use PHPUnit\Framework\TestCase;
@@ -20,31 +25,70 @@ class MySqlRegisterTest extends TestCase
     {
         self::assertInstanceOf(
             RegisterServiceInterface::class,
-            new MySqlRegister($this->getUserRepository()
+            new MySqlRegister(
+                $this->getUserRepository(),
+                $this->getPassvord(),
+                $this->getEvent(),
+                $this->getUser()
         ));
     }
     
     public function testRegisterUser()
     {
+        $userDto = new UserDto();
+        
         $userRepository = $this->getUserRepository();
-        
-        $user = new User();
-        
         $userRepository->expects(self::once())
             ->method('addUser')
-            ->willReturn($addedUsers[] = $user)
+            ->willReturn($addedUsers[] = $userDto)
         ;
         
-        $service = new MySqlRegister($userRepository);
+        $password = $this->getPassvord();
+        $password->expects(self::once())
+            ->method('encode')
+        ;
         
-        $actual = $service->registerUser($user);
+        $event = $this->getEvent();
+        $event->expects(self::once())
+            ->method('registerEvent')
+        ;
         
-        self::assertContains($user, $addedUsers);
+        $user = $this->getUser();
+        $user->expects(self::once())
+            ->method('createUser')
+        ;
+        
+        $service = new MySqlRegister($userRepository, $password, $event, $user);
+        
+        $actual = $service->registerUser($userDto);
+        
+        self::assertContains($userDto, $addedUsers);
     }
     
     private function getUserRepository(): UserRepositoryInterface
     {
         return $this->getMockBuilder(UserRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+    
+    private function getPassvord(): PasswordEncoderInterface
+    {
+        return $this->getMockBuilder(SymfonyPasswordEncoder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+    
+    private function getEvent(): DispatcherInterface
+    {
+        return $this->getMockBuilder(SymfonyEventDispatcher::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+    
+    private function getUser(): UserDtoToUser
+    {
+        return $this->getMockBuilder(UserDtoToUser::class)
             ->disableOriginalConstructor()
             ->getMock();
     }

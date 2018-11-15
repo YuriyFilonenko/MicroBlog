@@ -2,7 +2,7 @@
 
 namespace App\Service\Register;
 
-use App\Entity\User;
+use App\Dto\UserDto;
 
 /**
  * Contract for Register service.
@@ -14,7 +14,7 @@ interface RegisterServiceInterface
     /**
      * Register user.
      *
-     * @param User $user
+     * @param UserDto $userDto
      */
-    public function registerUser(User $user): void;
+    public function registerUser(UserDto $userDto): void;
 }
