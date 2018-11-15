@@ -2,8 +2,6 @@
 
 namespace App\Service\Mailer;
 
-use App\Entity\User;
-
 /**
  * Contract for Mailer service.
  *
@@ -12,9 +10,14 @@ use App\Entity\User;
 interface MailerServiceInterface
 {
     /**
-     * Sending emails.
-     *
-     * @param User $user
+     * Create message for send.
      */
-    public function sendEmail(User $user): void;
+    public function createMessage();
+
+    /**
+     * Send message.
+     *
+     * @param type $message
+     */
+    public function sendMessage($message);
 }

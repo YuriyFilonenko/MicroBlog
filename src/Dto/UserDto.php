@@ -2,7 +2,6 @@
 
 namespace App\Dto;
 
-use App\Entity\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -118,21 +117,5 @@ class UserDto implements UserInterface
     public function getSalt()
     {
         return null;
-    }
-
-    /**
-     * Creates new User from UserDto.
-     *
-     * @return User
-     */
-    public function createUser(): User
-    {
-        $user = new User();
-        $user->setUsername($this->username)
-                ->setPassword($this->password)
-                ->setEmail($this->email)
-                ->setFullName($this->fullName);
-
-        return $user;
     }
 }

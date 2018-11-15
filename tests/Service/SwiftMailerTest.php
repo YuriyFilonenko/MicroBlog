@@ -6,7 +6,6 @@ use App\Service\Mailer\MailerServiceInterface;
 use App\Service\Mailer\SwiftMailer;
 use PHPUnit\Framework\TestCase;
 use Swift_Mailer;
-use App\Mail\WelcomeMessageLetter;
 
 /**
  * Test case for SwiftMailer service.
@@ -21,8 +20,7 @@ class SwiftMailerTest extends TestCase
     protected function setUp() 
     {
         $this->service = new SwiftMailer(
-            $this->getSwiftMailer(),
-            $this->getWelcomeMessageLetter()
+            $this->getSwiftMailer()
         );
     }
 
@@ -31,33 +29,22 @@ class SwiftMailerTest extends TestCase
         self::assertInstanceOf(MailerServiceInterface::class, $this->service);
     }
     
-    public function testSendRegistrationEmail()
+    public function testSendMessage()
     {
-        $user = new \App\Entity\User;
-        $user->setEmail('user_email@test.com');
+        $message = new \Swift_Message;
         
         $swiftMailer = $this->getSwiftMailer();
         $swiftMailer->expects(self::once())
-            ->method('send');
+            ->method('send')
+            ->with($message);
         
-        $welcomeMessageLetter = $this->getWelcomeMessageLetter();
-        $welcomeMessageLetter->expects(self::once())
-                ->method('getWelcomeMessage');
-        
-        $service = new SwiftMailer($swiftMailer, $welcomeMessageLetter);
-        $service->sendEmail($user);
+        $service = new SwiftMailer($swiftMailer);
+        $service->sendMessage($message);
     }
     
     private function getSwiftMailer()
     {
         return $this->getMockBuilder(Swift_Mailer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-    
-    private function getWelcomeMessageLetter()
-    {
-        return $this->getMockBuilder(WelcomeMessageLetter::class)
             ->disableOriginalConstructor()
             ->getMock();
     }

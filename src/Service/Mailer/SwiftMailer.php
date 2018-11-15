@@ -2,9 +2,6 @@
 
 namespace App\Service\Mailer;
 
-use App\Entity\User;
-use App\Mail\WelcomeMessageLetter;
-
 /**
  * SwiftMailer service.
  *
@@ -12,20 +9,26 @@ use App\Mail\WelcomeMessageLetter;
  */
 class SwiftMailer implements MailerServiceInterface
 {
-    private $mailer;
-    private $welcomeMessagee;
+    private $swiftMailer;
 
-    public function __construct(\Swift_Mailer $mailer, WelcomeMessageLetter $welcomeMessage)
+    public function __construct(\Swift_Mailer $swiftMailer)
     {
-        $this->mailer = $mailer;
-        $this->welcomeMessage = $welcomeMessage;
+        $this->swiftMailer = $swiftMailer;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function sendEmail(User $user): void
+    public function createMessage()
     {
-        $this->mailer->send($this->welcomeMessage->getWelcomeMessage($user));
+        return new \Swift_Message();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sendMessage($message)
+    {
+        $this->swiftMailer->send($message);
     }
 }

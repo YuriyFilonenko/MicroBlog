@@ -3,7 +3,7 @@
 namespace App\Mail;
 
 use App\Entity\User;
-use Swift_Message;
+use App\Service\Mailer\MailerServiceInterface;
 use Twig_Environment;
 
 /**
@@ -13,32 +13,34 @@ use Twig_Environment;
  */
 class WelcomeMessageLetter
 {
+    private $mailerService;
     private $twig;
     private $mailFrom;
 
-    public function __construct(Twig_Environment $twig, string $mailFrom)
+    public function __construct(MailerServiceInterface $mailerService, Twig_Environment $twig, string $mailFrom)
     {
+        $this->mailerService = $mailerService;
         $this->twig = $twig;
         $this->mailFrom = $mailFrom;
     }
 
     /**
-     * Create welcome message letter.
+     * Send welcome message letter.
      *
      * @param User $user
-     *
-     * @return Swift_Message
      */
-    public function getWelcomeMessage(User $user): Swift_Message
+    public function send(User $user): void
     {
         $body = $this->twig->render('email/registration.html.twig', [
             'user' => $user,
         ]);
 
-        return (new Swift_Message())
+        $message = $this->mailerService->createMessage()
             ->setSubject('Welcome to the MigroBlog!')
             ->setFrom($this->mailFrom)
             ->setTo($user->getEmail())
             ->setBody($body, 'text/html');
+
+        $this->mailerService->sendMessage($message);
     }
 }

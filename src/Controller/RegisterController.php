@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\UserDto;
+use App\Dto\UserDtoToUser;
 use App\Form\UserType;
 use App\Service\Event\DispatcherInterface;
 use App\Service\PasswordEncoder\PasswordEncoderInterface;
@@ -22,15 +23,18 @@ class RegisterController extends AbstractController
     private $password;
     private $service;
     private $event;
+    private $newUser;
 
     public function __construct(
         PasswordEncoderInterface $password,
         RegisterServiceInterface $service,
-        DispatcherInterface $event
+        DispatcherInterface $event,
+        UserDtoToUser $newUser
     ) {
         $this->password = $password;
         $this->service = $service;
         $this->event = $event;
+        $this->newUser = $newUser;
     }
 
     /**
@@ -48,7 +52,7 @@ class RegisterController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $userDto->setPassword($this->password->encode($userDto));
-            $user = $userDto->createUser();
+            $user = $this->newUser->createUser($userDto);
             $this->service->registerUser($user);
             $this->event->registerEvent($user);
 

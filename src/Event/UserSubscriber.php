@@ -2,7 +2,7 @@
 
 namespace App\Event;
 
-use App\Service\Mailer\MailerServiceInterface;
+use App\Mail\WelcomeMessageLetter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -14,7 +14,7 @@ class UserSubscriber implements EventSubscriberInterface
 {
     private $service;
 
-    public function __construct(MailerServiceInterface $service)
+    public function __construct(WelcomeMessageLetter $service)
     {
         $this->service = $service;
     }
@@ -37,6 +37,6 @@ class UserSubscriber implements EventSubscriberInterface
     public function onUserRegister(UserRegisterEvent $event): void
     {
         $user = $event->getRegisteredUser();
-        $this->service->sendEmail($user);
+        $this->service->send($user);
     }
 }
